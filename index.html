@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício do Alienigena</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <style> body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; } </style>
+</head>
+
+<body>
+    <script>
+        // o que acontece aqui?
+        const larguraJogo = 700;
+        const alturaJogo = 850;
+
+        // onde eu defino as configurações do jogo
+        const config = {
+            type: Phaser.AUTO,
+            width: larguraJogo,
+            height: alturaJogo,
+            
+            // ativando a física no jogo
+            physics: {
+                default:'arcade',
+                arcade: {
+                    // define a gravidade do jogo (quão rápido o alien cai)
+                    gravity:{y:300},
+                    // comando para visualisar as informações de depuração relacionadas a física do jogo. Nas imagens móveis surgem um quadrado roxo - indicando a área do corpo físico considerado - e uma linha verde - representa a orientação de movimento da imagem, ou seja, a aceleração -.
+                    debug: true,
+                    
+                    // onde eu colocaria o: alien.body.setSize(20,40,true)?
+                }
+            },
+
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        // o que acontece aqui?
+        const game = new Phaser.Game(config);
+
+        // declarando variável
+        var alien;
+        var teclado;
+        var fogo;
+
+        function preload() 
+        
+        {// Carrega as imagens: background, alien, fogo
+        
+            this.load.image('background', 'assets/bg.png');
+            this.load.image('player', 'assets/alienigena.png');
+            this.load.image('turbo_nave', 'assets/turbo.png');
+        }
+
+        function create() 
+        
+        {//Adiciona as imagens a tela (a ordem de alistamento define a sobreposição das imagens entre si da camada superior para a inferior)
+            // posiciona o background alinhado com o espaço de tela do jogo definido no "<Script>"
+            // o que é a função sprite?
+            // se eu mudar de false para true, não altera o funcionamento adequado, porque a necessidade dessa linha?
+            // Posiciona o alien no centro da tela do jogo definido no "<Script>"
+            // define as barreiras físicas na tela, impedindo que o alien suma da tela ao descer
+            // libera o acesso às teclas de setas do teclado
+
+            this.add.image(larguraJogo/2, alturaJogo/2, 'background');
+            fogo = this.add.sprite(0,0,'turbo_nave');
+            fogo.setVisible(false);
+            alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
+            alien.setCollideWorldBounds(true);
+            teclado = this.input.keyboard.createCursorKeys();
+        }
+
+        function update()
+        
+        {// Ativando os controles ao Alien
+            // if: ao clicar na tecla da esquerda, o alien se move para a esquerda numa distância de 150 px [ -> ]
+            // else if: ao clicar na tecla da direita, o alien se move para a direita numa distância de 150 px [ -> ]
+            // else: Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada. Na sua ausência, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
+            // if: Movimento para cima [^] e imagem do fogo aparece
+            // else: Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
+            //fogo: define a posição do fogo em relação ao Alien
+
+            if (teclado.left.isDown) {
+                alien.setVelocityX(-150); }
+            else if (teclado.right.isDown) {
+                alien.setVelocityX(150); }
+            else {
+                alien.setVelocityX(0);}
+            if (teclado.up.isDown) {
+                alien.setVelocityY(-150); 
+                ativarTurbo(); }
+            else { semTurbo(); }
+            
+            fogo.setPosition(alien.x, alien.y + alien.height/2);
+        }
+        
+        function ativarTurbo(){
+            fogo.setVisible(true);
+        }
+
+        function semTurbo(){
+            fogo.setVisible(false);
+        }
+
+    </script>
+</body>
+</html>
