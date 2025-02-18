@@ -77,7 +77,7 @@
             plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // plataforma de cima
 
             // MOEDAS: exibe e define o lugar onde vão cair pela primeira vez, as barreiras e reação com o chão
-            moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
+            moeda = this.physics.add.sprite(larguraJogo/3,0,'moeda'); // coloquei a largura do jogo dividido por 3 ao invéz de 2 para que o jogo inicie com o placar=0
             moeda.setCollideWorldBounds(true); 
             moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
             moeda.setCircle(32,-9,-9); // circulo rosa que representa a área considerada como corpo físico da moeda
