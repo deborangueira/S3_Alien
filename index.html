@@ -83,6 +83,7 @@
             moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
             moeda.setCollideWorldBounds(true); 
             moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
+            moeda.setCircle(32,-9,-9);
             this.physics.add.collider(moeda,plataforma1);
             this.physics.add.collider(moeda,plataforma2);
 
