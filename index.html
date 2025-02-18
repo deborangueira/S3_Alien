@@ -26,8 +26,6 @@
                 arcade: {
                     gravity:{y:300}, // define a gravidade do jogo (quão rápido o alien cai)
                     debug: true, // representa a área da imagem que vai ser considerada como corpo físico (indicado com o quadrado roxo), bem como representa a orientação de movimento da imagem, ou seja, a sua aceleração (linha verde)
-                    
-                    // !!onde eu colocaria o: alien.body.setSize(20,40,true)?
                 }
             },
             scene: {
@@ -49,7 +47,7 @@
         var pontuacao = 0; // pontuação inicia em zero
         var placar;
 
-        function preload() // Carrega as imagens: background, alien, fogo, plataforma, moeda
+        function preload() // Carrega as imagens: background, alien, fogo, plataforma e moeda
         {        
             this.load.image('background', 'assets/bg.png');
             this.load.image('player', 'assets/alienigena.png');
@@ -58,92 +56,90 @@
             this.load.image('moeda','assets/moeda.png')
         }
 
-        function create() //Adiciona as imagens a tela (a ordem de alistamento define a sobreposição das imagens entre si da camada superior para a inferior)
-        
+        function create() //Adiciona as imagens na tela (a ordem de alistamento define a sobreposição das imagens entre si - da camada superior para a inferior)
         {
-            // posiciona o background alinhado com o espaço de tela do jogo definido no "<Script>"
-            // o que é a função sprite?
-            // se eu mudar de false para true, não altera o funcionamento adequado, porque a necessidade dessa linha?
-            // exibe o alien e o posiciona no centro e no topo da tela, respectivamente
-            // define as barreiras físicas na tela, impedindo que o alien suma da tela de jogo
-            // libera o acesso às teclas de setas do teclado !! como o programa sabe que as setas são para controlar o alien??
-            // exibe a plataforma e a posiciona no centro da tela
-            // .collider: define que os dois elementos dentro dos parenteses não podem se atravessar.
-            // exibe a moeda e a posiciona no centro da tela
-            // define as barreiras físicas na tela, impedindo que a moeda suma da tela de jogo
-            // define o quanto a moeda vai subir depois de colidir com qualquer superfície
-            // .collider: define que os dois elementos dentro dos parenteses não podem se atravessar.
-            // adiciona o placar (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
-            // define que os dois elementos dentro dos parenteses se sobrepõem.
-            // e quando isso ocoore, a moeda fica invisível
-            // sorteia um número e guarda essa informação numa variável
-            // que é utilizado para posição na próxima vez que aparece na tela (por isso a posição da moeda é diferente a cada vez que um ponto é feito)
-            // no caso de sobreposição, uma pontuação é somada ao placar
-            // atualiza os valores exibidos em placar
-            // ativa-se então a visualização de uma nova moeda
-
-
+            // exibe o background e define o posicionamento na tela
             this.add.image(larguraJogo/2, alturaJogo/2, 'background');
             
+            // exibe o fogo identificando-a como uma figura animada
             fogo = this.add.sprite(0,0,'turbo_nave');
             fogo.setVisible(false);
 
+            // exibe o alien identificando-a como figura móvel, definindo o posicionamento, barreiras e controles mecânicos
             alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
             alien.setCollideWorldBounds(true);
-            teclado = this.input.keyboard.createCursorKeys();
+            teclado = this.input.keyboard.createCursorKeys(); // libera o acesso às teclas de setas do teclado
 
+            // exibe as plataformas identificando-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
             plataforma1 = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo');
             this.physics.add.collider(alien, plataforma1);
             plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // seria legal se essa barra se movesse da direita para a esquerda
             this.physics.add.collider(alien, plataforma2);
 
+            // exibe as moedas definindo o lugar onde vão cair pela primeira vez, as barreiras, reação com o chão e colisões com outras figuras
             moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
-            moeda.setCollideWorldBounds(true);
-            moeda.setBounce(0.7);
+            moeda.setCollideWorldBounds(true); 
+            moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
             this.physics.add.collider(moeda,plataforma1);
             this.physics.add.collider(moeda,plataforma2);
 
-
+            // adiciona o placar (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
             placar = this.add.text(50, 50, 'Moedas:' + pontuacao, {fontSize:'45px', fill:'#495613'});
         
-            this.physics.add.overlap(alien,moeda,function(){
-                moeda.setVisible(false);
-                var posicaoMoeda_Y = Phaser.Math.RND.between(50,650);
-                moeda.setPosition(posicaoMoeda_Y,100);
-                pontuacao +=1;
-                placar.setText('Moedas:' + pontuacao); // seria legal se desse para atingir um número máximo e assim você ter vitória
-                moeda.setVisible(true);
+            // Define a dinâmica da moeda
+            this.physics.add.overlap(alien,moeda,
+                function(){
+                //interação moeda-alien
+                moeda.setVisible(false); // quando alien e moeda se sobrepõem, a moeda fica invisível
+                var posicaoMoeda_Y = Phaser.Math.RND.between(50,650); // a seguir um número é sorteado e guardado numa variável
+                moeda.setPosition(posicaoMoeda_Y,100); //esse valor é utilizado para re-posicionamento da moeda na tela (por isso a posição da moeda é diferente a cada vez que um ponto é feito)
+                //interação moeda-placar
+                pontuacao +=1; // no caso de sobreposição, uma pontuação é somada ao placar
+                placar.setText('Moedas:' + pontuacao); // atualiza os valores exibidos no placar
+                moeda.setVisible(true); // ativa-se então a visualização de uma nova moeda
             });
+
+            //LEGENDAS
+                // add.image != add.spite (pode ser animado) != add.staticImage != add.text
+                // larguraJogo/x, alturaJogo/x -- define o posicionamento da figura dentro da tela do jogo (o qual foi delimitado nas variáveis const em <script>)
+                // .setCollideWorldBounds(true) -- define  barreiras físicas na tela, impedindo que a figura suma da tela de jogo
+                // add.collider -- define que os dois elementos dentro dos parenteses não podem se atravessar.
+                // add.overlap -- define que os dois elementos dentro dos parenteses podem se atravessar.
+                // .setBounce -- define o quanto a figura vai subir como uma reação a velociade em que chega no chão
+            
+            // seria legal se desse para atingir um número máximo e assim você ter vitória
+            // ??? se eu mudar de false para true no fogo.setVisible, não altera o funcionamento adequado, porque a necessidade dessa linha?
+            // ????onde eu colocaria o: alien.body.setSize(20,40,true)?
+
         }
 
         function update()
         
         {// Ativando os controles ao Alien
-            // if: ao clicar na tecla da esquerda, o alien se move para a esquerda numa distância de 150 px [ -> ]
-            // else if: ao clicar na tecla da direita, o alien se move para a direita numa distância de 150 px [ -> ]
-            // else: Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada. Na sua ausência, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
-            // if: Movimento para cima [^] e imagem do fogo aparece
-            // else: Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
-            // fogo: define a posição do fogo em relação ao Alien
-
+            //ao clicar na tecla da esquerda, o alien se move para a esquerda numa distância de 150 px [ -> ]
             if (teclado.left.isDown) {
                 alien.setVelocityX(-150); }
+            //ao clicar na tecla da direita, o alien se move para a direita numa distância de 150 px [ -> ]
             else if (teclado.right.isDown) {
                 alien.setVelocityX(150); }
+            // Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada. Na sua ausência, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
             else {
                 alien.setVelocityX(0);}
+            // Movimento para cima [^] e imagem do fogo aparece
             if (teclado.up.isDown) {
                 alien.setVelocityY(-150); 
                 ativarTurbo(); }
+            // Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
             else { semTurbo(); }
-            
+
+            // define a posição do fogo em relação ao Alien: o fogo segue a orientação cartesiana do Alien e se posiciona no centro da figura
             fogo.setPosition(alien.x, alien.y + alien.height/2);
         }
         
+        // Define as funções do que significa "ativarTurbo" e "semTurbo"
         function ativarTurbo(){
             fogo.setVisible(true);
         }
-
         function semTurbo(){
             fogo.setVisible(false);
         }
