@@ -59,35 +59,39 @@
 
         function create() //Adiciona as imagens na tela (a ordem de alistamento define a sobreposição das imagens entre si - da camada superior para a inferior)
         {
-            // exibe o background e define o posicionamento na tela
+            // BACKGROUND: exibe e define o posicionamento na tela
             this.add.image(larguraJogo/2, alturaJogo/2, 'background');
             
-            // exibe o fogo identificando-a como uma figura animada
+            // FOGO: exibe e identifica-a como uma figura animada
             fogo = this.add.sprite(0,0,'turbo_nave');
             fogo.setVisible(false);
 
-            // exibe o alien identificando-a como figura móvel, definindo o posicionamento, barreiras e controles mecânicos
+            // ALIEN: exibe e identifica-a como figura móvel, definindo o posicionamento, barreiras e controles mecânicos
             alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
             alien.setCollideWorldBounds(true);
             alien.body.setSize(120,100,true);
 
             teclado = this.input.keyboard.createCursorKeys(); // libera o acesso às teclas de setas do teclado
 
-            // exibe as plataformas identificando-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
+            // PLATAFORMAS: exibe e identifica-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
             plataforma1 = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo'); // plataforma de baixo
             this.physics.add.collider(alien, plataforma1);
             plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // plataforma de cima
             this.physics.add.collider(alien, plataforma2);
 
-            // exibe as moedas definindo o lugar onde vão cair pela primeira vez, as barreiras, reação com o chão e colisões com outras figuras
+            // MOEDAS: exibe e define o lugar onde vão cair pela primeira vez, as barreiras, reação com o chão e colisões com outras figuras
             moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
             moeda.setCollideWorldBounds(true); 
             moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
             moeda.setCircle(32,-9,-9);
-            this.physics.add.collider(moeda,plataforma1);
-            this.physics.add.collider(moeda,plataforma2);
 
-            // adiciona o placar (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
+            // usando estrutura de lista para definir as colisões. Utilizar essa estrutura parece não fazer sentido agora, mas seria útil no caso de ter muitas plataformas na tela pois reduziria a necesidade de escrever várias linhas de código
+            colisoes = [plataforma1,plataforma2]
+            for (var i = 0; i < colisoes.length; i++){
+                this.physics.add.collider(moeda,colisoes[i]);
+            }
+
+            // adiciona o PLACAR (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
             placar = this.add.text(50, 50, 'Moedas:' + pontuacao, {fontSize:'45px', fill:'#495613'});
         
             // Define a dinâmica da moeda
@@ -104,15 +108,13 @@
             });
 
             //LEGENDAS
-                // add.image != add.spite (pode ser animado) != add.staticImage != add.text
+                // add.image != add.spite != add.staticImage != add.text -- a diferença se refere ao tipo de 
                 // larguraJogo/x, alturaJogo/x -- define o posicionamento da figura dentro da tela do jogo (o qual foi delimitado nas variáveis const em <script>)
                 // .setCollideWorldBounds(true) -- define  barreiras físicas na tela, impedindo que a figura suma da tela de jogo
                 // add.collider -- define que os dois elementos dentro dos parenteses não podem se atravessar.
                 // add.overlap -- define que os dois elementos dentro dos parenteses podem se atravessar.
                 // .setBounce -- define o quanto a figura vai subir como uma reação a velociade em que chega no chão
             
-            // seria legal se essa barra se movesse da direita para a esquerda
-
         }
 
         function update()
@@ -138,7 +140,7 @@
             fogo.setPosition(alien.x, alien.y + alien.height/2);
         }
         
-        // Define as funções "ativarTurbo" e "semTurbo" com os códigos que devem ser executados quando as funções forem evocadas
+        // Define as funções "ativarTurbo" e "semTurbo" com os códigos que devem ser executados quando essas funções forem evocadas
         function ativarTurbo(){
             fogo.setVisible(true);
         }
