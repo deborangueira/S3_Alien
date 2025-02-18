@@ -26,6 +26,7 @@
                 arcade: {
                     gravity:{y:300}, // define a gravidade do jogo (quão rápido o alien cai)
                     debug: true, // representa a área da imagem que vai ser considerada como corpo físico (indicado com o quadrado roxo), bem como representa a orientação de movimento da imagem, ou seja, a sua aceleração (linha verde)
+                    
                 }
             },
             scene: {
@@ -68,6 +69,8 @@
             // exibe o alien identificando-a como figura móvel, definindo o posicionamento, barreiras e controles mecânicos
             alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
             alien.setCollideWorldBounds(true);
+            alien.body.setSize(120,100,true);
+
             teclado = this.input.keyboard.createCursorKeys(); // libera o acesso às teclas de setas do teclado
 
             // exibe as plataformas identificando-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
@@ -107,9 +110,6 @@
                 // add.overlap -- define que os dois elementos dentro dos parenteses podem se atravessar.
                 // .setBounce -- define o quanto a figura vai subir como uma reação a velociade em que chega no chão
             
-            // seria legal se desse para atingir um número máximo e assim você ter vitória
-            // ??? se eu mudar de false para true no fogo.setVisible, não altera o funcionamento adequado, porque a necessidade dessa linha?
-            // ????onde eu colocaria o: alien.body.setSize(20,40,true)?
             // seria legal se essa barra se movesse da direita para a esquerda
 
         }
@@ -131,13 +131,13 @@
                 alien.setVelocityY(-150); 
                 ativarTurbo(); }
             // Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
-            else { semTurbo(); }
+            else {semTurbo(); }
 
             // define a posição do fogo em relação ao Alien: o fogo segue a orientação cartesiana do Alien e se posiciona no centro da figura
             fogo.setPosition(alien.x, alien.y + alien.height/2);
         }
         
-        // Define as funções do que significa "ativarTurbo" e "semTurbo"
+        // Define as funções "ativarTurbo" e "semTurbo" com os códigos que devem ser executados quando as funções forem evocadas
         function ativarTurbo(){
             fogo.setVisible(true);
         }
