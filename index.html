@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercício do Alienigena</title>
+    <title>Debora's Alien</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
     <style> body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; } </style>
 </head>
 
 <body>
     <script>
-        // o que acontece aqui?
+        // define o espaço na tela do navegador que será utilizado para exibir o jogo
         const larguraJogo = 700;
         const alturaJogo = 850;
 
-        // onde eu defino as configurações do jogo
+        // definição das configurações do jogo
         const config = {
             type: Phaser.AUTO,
             width: larguraJogo,
             height: alturaJogo,
             
-            // ativando a física no jogo
+            // Aplica leis da física ao funcionamento do jogo
             physics: {
                 default:'arcade',
                 arcade: {
-                    // define a gravidade do jogo (quão rápido o alien cai)
-                    gravity:{y:300},
-                    // comando para visualisar as informações de depuração relacionadas a física do jogo. Nas imagens móveis surgem um quadrado roxo - indicando a área do corpo físico considerado - e uma linha verde - representa a orientação de movimento da imagem, ou seja, a aceleração -.
-                    debug: true,
+                    gravity:{y:300}, // define a gravidade do jogo (quão rápido o alien cai)
+                    debug: true, // representa a área da imagem que vai ser considerada como corpo físico (indicado com o quadrado roxo), bem como representa a orientação de movimento da imagem, ou seja, a sua aceleração (linha verde)
                     
-                    // onde eu colocaria o: alien.body.setSize(20,40,true)?
+                    // !!onde eu colocaria o: alien.body.setSize(20,40,true)?
                 }
             },
-
             scene: {
                 preload: preload,
                 create: create,
@@ -40,21 +37,25 @@
             }
         };
 
-        // o que acontece aqui?
-        const game = new Phaser.Game(config);
+        const game = new Phaser.Game(config); // inicialização de um novo jogo utilizando o framework Phaser
 
-        // declarando variável
+
+        // declarando variáveis
         var alien;
         var teclado;
         var fogo;
+        var plataforma;
+        var moeda;
+        var pontuacao = 0; // pontuação inicia em zero
+        var placar;
 
-        function preload() 
-        
-        {// Carrega as imagens: background, alien, fogo
-        
+        function preload() // Carrega as imagens: background, alien, fogo, plataforma, moeda
+        {        
             this.load.image('background', 'assets/bg.png');
             this.load.image('player', 'assets/alienigena.png');
             this.load.image('turbo_nave', 'assets/turbo.png');
+            this.load.image('plataforma_tijolo','assets/tijolos.png');
+            this.load.image('moeda','assets/moeda.png')
         }
 
         function create() 
@@ -63,16 +64,52 @@
             // posiciona o background alinhado com o espaço de tela do jogo definido no "<Script>"
             // o que é a função sprite?
             // se eu mudar de false para true, não altera o funcionamento adequado, porque a necessidade dessa linha?
-            // Posiciona o alien no centro da tela do jogo definido no "<Script>"
-            // define as barreiras físicas na tela, impedindo que o alien suma da tela ao descer
-            // libera o acesso às teclas de setas do teclado
+            // exibe o alien e o posiciona no centro e no topo da tela, respectivamente
+            // define as barreiras físicas na tela, impedindo que o alien suma da tela de jogo
+            // libera o acesso às teclas de setas do teclado !! como o programa sabe que as setas são para controlar o alien??
+            // exibe a plataforma e a posiciona no centro da tela
+            // define que os dois elementos dentro dos parenteses não podem se atravessar.
+            // exibe a moeda e a posiciona no centro da tela
+            // define as barreiras físicas na tela, impedindo que a moeda suma da tela de jogo
+            // define o quanto a moeda vai subir ao colidir com qualquer superfície
+            // define que os dois elementos dentro dos parenteses não podem se atravessar.
+            // adiciona o placar (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
+            // define que os dois elementos dentro dos parenteses se sobrepõem.
+            // e quando isso ocoore, a moeda fica invisível
+            // sorteia um número e guarda essa informação numa variável
+            // que é utilizado para posição na próxima vez que aparece na tela (por isso a posição da moeda é diferente a cada vez que um ponto é feito)
+            // no caso de sobreposição, uma pontuação é somada ao placar
+            // atualiza os valores exibidos em placar
+            // ativa-se então a visualização de uma nova moeda
+
 
             this.add.image(larguraJogo/2, alturaJogo/2, 'background');
+            
             fogo = this.add.sprite(0,0,'turbo_nave');
             fogo.setVisible(false);
+
             alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
             alien.setCollideWorldBounds(true);
             teclado = this.input.keyboard.createCursorKeys();
+
+            plataforma = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo');
+            this.physics.add.collider(alien, plataforma);
+
+            moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
+            moeda.setCollideWorldBounds(true);
+            moeda.setBounce(0.7);
+            this.physics.add.collider(moeda,plataforma);
+
+            placar = this.add.text(50, 50, 'Moedas:' + pontuacao, {fontSize:'45px', fill:'#495613'});
+        
+            this.physics.add.overlap(alien,moeda,function(){
+                moeda.setVisible(false);
+                var posicaoMoeda_Y = Phaser.Math.RND.between(50,650);
+                moeda.setPosition(posicaoMoeda_Y,100);
+                pontuacao +=1;
+                placar.setText('Moedas:' + pontuacao);
+                moeda.setVisible(true);
+            });
         }
 
         function update()
@@ -83,7 +120,7 @@
             // else: Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada. Na sua ausência, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
             // if: Movimento para cima [^] e imagem do fogo aparece
             // else: Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
-            //fogo: define a posição do fogo em relação ao Alien
+            // fogo: define a posição do fogo em relação ao Alien
 
             if (teclado.left.isDown) {
                 alien.setVelocityX(-150); }
