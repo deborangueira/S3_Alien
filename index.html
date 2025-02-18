@@ -66,32 +66,30 @@
             fogo = this.add.sprite(0,0,'turbo_nave');
             fogo.setVisible(false);
 
-            // ALIEN: exibe e identifica-a como figura móvel, definindo o posicionamento, barreiras e controles mecânicos
+            // ALIEN: exibe, identifica-a como figura móvel, e define o posicionamento, barreiras e controles mecânicos
             alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
             alien.setCollideWorldBounds(true);
             alien.body.setSize(120,100,true);
-
             teclado = this.input.keyboard.createCursorKeys(); // libera o acesso às teclas de setas do teclado
 
-            // PLATAFORMAS: exibe e identifica-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
+            // PLATAFORMAS: exibe, identifica-as como figuras estáticas e posiciona-as na tela
             plataforma1 = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo'); // plataforma de baixo
-            this.physics.add.collider(alien, plataforma1);
             plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // plataforma de cima
-            this.physics.add.collider(alien, plataforma2);
 
-            // MOEDAS: exibe e define o lugar onde vão cair pela primeira vez, as barreiras, reação com o chão e colisões com outras figuras
+            // MOEDAS: exibe e define o lugar onde vão cair pela primeira vez, as barreiras e reação com o chão
             moeda = this.physics.add.sprite(larguraJogo/2,0,'moeda');
             moeda.setCollideWorldBounds(true); 
             moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
-            moeda.setCircle(32,-9,-9);
+            moeda.setCircle(32,-9,-9); // circulo rosa que representa a área considerada como corpo físico da moeda
 
-            // usando estrutura de lista para definir as colisões. Utilizar essa estrutura parece não fazer sentido agora, mas seria útil no caso de ter muitas plataformas na tela pois reduziria a necesidade de escrever várias linhas de código
+            // usando estrutura de lista para definir as colisões --- Obs.: Utilizar essa estrutura parece não fazer sentido agora, mas seria útil no caso de ter muitas plataformas na tela pois reduziria a necesidade de escrever várias linhas de código
             colisoes = [plataforma1,plataforma2]
             for (var i = 0; i < colisoes.length; i++){
                 this.physics.add.collider(moeda,colisoes[i]);
+                this.physics.add.collider(alien,colisoes[i]);
             }
 
-            // adiciona o PLACAR (posição, conteúdo - concatenação entre o texto e a variável que guarda a pontuação-, tamanho da fonte e cor do texto)
+            // PLACAR: definindo a posição, conteúdo (concatenação texto e variável que guarda a pontuação), tamanho da fonte e cor do texto respectivamente.
             placar = this.add.text(50, 50, 'Moedas:' + pontuacao, {fontSize:'45px', fill:'#495613'});
         
             // Define a dinâmica da moeda
@@ -107,7 +105,7 @@
                 moeda.setVisible(true); // ativa-se então a visualização de uma nova moeda
             });
 
-            //LEGENDAS
+            //LEGENDAS de estudo pessoal, guardei aqui o significado de alguns termos para que eu possa consultar depois e usar caso seja necessário no dev do projeto.
                 // add.image != add.spite != add.staticImage != add.text -- a diferença se refere ao tipo de 
                 // larguraJogo/x, alturaJogo/x -- define o posicionamento da figura dentro da tela do jogo (o qual foi delimitado nas variáveis const em <script>)
                 // .setCollideWorldBounds(true) -- define  barreiras físicas na tela, impedindo que a figura suma da tela de jogo
@@ -120,23 +118,19 @@
         function update()
         
         {// Ativando os controles ao Alien
-            //ao clicar na tecla da esquerda, o alien se move para a esquerda numa distância de 150 px [ -> ]
             if (teclado.left.isDown) {
-                alien.setVelocityX(-150); }
-            //ao clicar na tecla da direita, o alien se move para a direita numa distância de 150 px [ -> ]
+                alien.setVelocityX(-150); } //ao clicar na tecla da esquerda, o alien se move para a esquerda numa distância de 150 px [ -> ]
             else if (teclado.right.isDown) {
-                alien.setVelocityX(150); }
-            // Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada. Na sua ausência, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
+                alien.setVelocityX(150); } //ao clicar na tecla da direita, o alien se move para a direita numa distância de 150 px [ -> ]
             else {
-                alien.setVelocityX(0);}
-            // Movimento para cima [^] e imagem do fogo aparece
+                alien.setVelocityX(0);} // Garante que o alien pare o movimento no caso de nenhuma tecla estar sendo acionada.Sem isso, o alien continuaria a se mover de acordo com a última tecla que foi clicada.
+
             if (teclado.up.isDown) {
                 alien.setVelocityY(-150); 
-                ativarTurbo(); }
-            // Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some 
-            else {semTurbo(); }
+                ativarTurbo(); } // Movimento para cima [^] e imagem do fogo aparece 
+            else {semTurbo(); } // Movimento para baixo em y seguindo a gravidade em y e imagem do turbo some
 
-            // define a posição do fogo em relação ao Alien: o fogo segue a orientação cartesiana do Alien e se posiciona no centro da figura
+         // define a posição do fogo em relação ao Alien: o fogo segue a orientação cartesiana do Alien e se posiciona no centro da figura
             fogo.setPosition(alien.x, alien.y + alien.height/2);
         }
         
