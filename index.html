@@ -71,9 +71,9 @@
             teclado = this.input.keyboard.createCursorKeys(); // libera o acesso às teclas de setas do teclado
 
             // exibe as plataformas identificando-as como figuras estáticas, e definindo o posicionamento na tela e as colisões com outras figuras
-            plataforma1 = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo');
+            plataforma1 = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2,'plataforma_tijolo'); // plataforma de baixo
             this.physics.add.collider(alien, plataforma1);
-            plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // seria legal se essa barra se movesse da direita para a esquerda
+            plataforma2 = this.physics.add.staticImage(larguraJogo/4, alturaJogo/4,'plataforma_tijolo'); // plataforma de cima
             this.physics.add.collider(alien, plataforma2);
 
             // exibe as moedas definindo o lugar onde vão cair pela primeira vez, as barreiras, reação com o chão e colisões com outras figuras
@@ -110,6 +110,7 @@
             // seria legal se desse para atingir um número máximo e assim você ter vitória
             // ??? se eu mudar de false para true no fogo.setVisible, não altera o funcionamento adequado, porque a necessidade dessa linha?
             // ????onde eu colocaria o: alien.body.setSize(20,40,true)?
+            // seria legal se essa barra se movesse da direita para a esquerda
 
         }
 
