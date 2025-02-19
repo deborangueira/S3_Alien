@@ -82,24 +82,22 @@
             moeda.setBounce(0.7); // quanto menor, menos alto a moeda sobe depois de colidir com o chão
             moeda.setCircle(32,-9,-9); // circulo rosa que representa a área considerada como corpo físico da moeda
 
-            // usando estrutura de lista para definir as colisões --- Obs.: Utilizar essa estrutura parece não fazer sentido agora, mas seria útil no caso de ter muitas plataformas na tela pois reduziria a necesidade de escrever várias linhas de código
-            colisoes = [plataforma1,plataforma2]
-            for (var i = 0; i < colisoes.length; i++){
-                this.physics.add.collider(moeda,colisoes[i]);
-                this.physics.add.collider(alien,colisoes[i]);
-            }
-
-            // PLACAR: definindo a posição, conteúdo (concatenação texto e variável que guarda a pontuação), tamanho da fonte e cor do texto respectivamente.
+            // PLACAR: definindo a posição, conteúdo (concatenação entre texto e variável que guarda a pontuação), tamanho da fonte e cor do texto respectivamente.
             placar = this.add.text(50, 50, 'Moedas:' + pontuacao, {fontSize:'45px', fill:'#495613'});
         
-            // Define a dinâmica da moeda
+            // COLISÕES: usando estrutura de lista para defini-las
+            colisoes = [plataforma1,plataforma2]
+                this.physics.add.collider(moeda,colisoes);
+                this.physics.add.collider(alien,colisoes);        
+
+            // INTERAÇÃO: Define a dinâmica da moeda com o alien e a repercurção no placar
             this.physics.add.overlap(alien,moeda,
                 function(){
-                //interação moeda-alien
+                //moeda-alien
                 moeda.setVisible(false); // quando alien e moeda se sobrepõem, a moeda fica invisível
                 var posicaoMoeda_Y = Phaser.Math.RND.between(50,650); // a seguir um número é sorteado e guardado numa variável
                 moeda.setPosition(posicaoMoeda_Y,100); //esse valor é utilizado para re-posicionamento da moeda na tela (por isso a posição da moeda é diferente a cada vez que um ponto é feito)
-                //interação moeda-placar
+                //moeda-placar
                 pontuacao +=1; // no caso de sobreposição, uma pontuação é somada ao placar
                 placar.setText('Moedas:' + pontuacao); // atualiza os valores exibidos no placar
                 moeda.setVisible(true); // ativa-se então a visualização de uma nova moeda
